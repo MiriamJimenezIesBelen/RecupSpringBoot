@@ -3,6 +3,8 @@ package com.examenjpa.recuptema4.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,11 +21,14 @@ public class Curso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 120)
     private String titulo;
 
+    @Column(length = 255)
     private String resumen;
 
-    private double precio;
+    @Column(precision = 38, scale = 2)
+    private BigDecimal precio;
 
     private int horas;
 
@@ -31,6 +36,7 @@ public class Curso {
     @JoinColumn(name = "nivel_id")
     private Nivel nivel;
 
-    @OneToMany(mappedBy = "curso")
-    private List<Inscripcion> inscripciones;
+    @ManyToMany(mappedBy = "cursos")
+    @Builder.Default
+    private List<Alumno> alumnos = new ArrayList<>();
 }

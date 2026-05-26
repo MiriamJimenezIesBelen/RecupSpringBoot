@@ -3,6 +3,7 @@ package com.examenjpa.recuptema4.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,12 +24,23 @@ public class Alumno {
     private Long id;
 
 
+    @Column(length = 120)
     private String email;
 
+    @Column(length = 120)
     private String username;
 
+    @Column(length = 255)
     private String password;
 
-    @OneToMany(mappedBy = "alumno",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Inscripcion> inscripciones;
+    @ManyToMany
+    @JoinTable(
+            name = "inscripcion",
+            joinColumns = @JoinColumn(name = "alumno_id"),
+            inverseJoinColumns = @JoinColumn(name = "curso_id")
+    )
+
+    @Builder.Default
+    private List<Curso> cursos = new ArrayList<>();
+
 }
