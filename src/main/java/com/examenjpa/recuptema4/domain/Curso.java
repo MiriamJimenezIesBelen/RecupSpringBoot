@@ -8,35 +8,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "curso")
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Curso {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 120)
     private String titulo;
 
-    @Column(length = 255)
     private String resumen;
 
-    @Column(precision = 38, scale = 2)
     private BigDecimal precio;
 
-    private int horas;
+    private Integer horas;
 
     @ManyToOne
+    // Crea fk nivel_id
     @JoinColumn(name = "nivel_id")
     private Nivel nivel;
 
-    @ManyToMany(mappedBy = "cursos")
-    @Builder.Default
-    private List<Alumno> alumnos = new ArrayList<>();
+    @OneToMany(mappedBy = "curso")
+    private List<Inscripcion> inscripciones = new ArrayList<>();
+
 }

@@ -2,87 +2,134 @@ package com.examenjpa.recuptema4.controller;
 
 import com.examenjpa.recuptema4.domain.Curso;
 import com.examenjpa.recuptema4.dto.CursoDTO;
+import com.examenjpa.recuptema4.dto.InscripcionDTO;
 import com.examenjpa.recuptema4.service.CursoService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Set;
+
 @RestController
-@RequestMapping("/examen/cursos")
-@CrossOrigin(origins = "*")
+@RequestMapping("/examen")
+@RequiredArgsConstructor
 public class CursoController {
 
     private final CursoService cursoService;
 
-    public CursoController(CursoService cursoService) {
-        this.cursoService = cursoService;
+
+    @GetMapping("/cursos")
+    public List<Curso> findAll() {
+        return cursoService.findAll();
     }
 
-    // LISTADO + FILTROS + PAGINACION
-    @GetMapping
-    public ResponseEntity<Page<CursoDTO>> findAll(
-            @RequestParam(required = false) String busqueda,
-            Pageable pageable
+    @GetMapping("/cursos/{id}")
+    public Curso findById(@PathVariable Long id) {
+        return cursoService.findById(id);
+    }
+
+    @PostMapping("/cursos")
+    public Curso save(@RequestBody Curso curso) {
+        return cursoService.save(curso);
+    }
+
+    @PutMapping("/cursos/{id}")
+    public Curso update(@PathVariable Long id,
+                        @RequestBody Curso curso) {
+        return cursoService.update(id, curso);
+    }
+
+    @DeleteMapping("/cursos/{id}")
+    public void delete(@PathVariable Long id) {
+        cursoService.delete(id);
+    }
+
+    //  LISTADO
+
+    @GetMapping("/cursos/listado")
+    public Page<CursoDTO> listado(
+
+
+            // Si no viene, por defecto cadena vacía
+            @RequestParam(defaultValue = "")
+            String busqueda,
+
+            @RequestParam(defaultValue = "0")
+            int pagina,
+
+            @RequestParam(defaultValue = "5")
+            int tamano,
+
+            @RequestParam(defaultValue = "precio,asc")
+            String ordenacion
+
     ) {
 
-        String campo = "titulo";
-        String valor = "";
 
-        if (busqueda != null) {
+        // Separamos "precio,desc" en ["precio", "desc"]
+        String[] partesOrden = ordenacion.split(",");
 
-            String[] partes = busqueda.split(",");
+        // Campos que se permiten usar para ordenar.
 
-            if (partes.length == 2) {
-                campo = partes[0];
-                valor = partes[1];
-            } else {
-                valor = busqueda;
+        Set<String> camposValidos = Set.of("titulo", "resumen", "precio", "horas");
+
+        // Empezamos con los valores por defecto
+        String campo   = "precio";
+        String sentido = "asc";
+
+        if (partesOrden.length == 2) {
+
+            //  Si el campo que llega es valido
+            if (camposValidos.contains(partesOrden[0].toLowerCase())) {
+                campo = partesOrden[0].toLowerCase();
             }
+
+
+            if (partesOrden[1].equalsIgnoreCase("desc")) {
+                sentido = "desc";
+            }
+
         }
 
-        return ResponseEntity.ok(
-                cursoService.buscar(campo, valor, pageable)
-        );
+
+        // Ordenacion
+        Sort sort = sentido.equals("desc")
+                ? Sort.by(campo).descending()
+                : Sort.by(campo).ascending();
+
+        // Construimos el Pageable con página, tamaño y orden
+        Pageable pageable = PageRequest.of(pagina, tamano, sort);
+
+
+        String[] partesBusqueda = busqueda.split(",", 2);
+
+        String campoBusqueda;
+        String valorBusqueda;
+
+        if (partesBusqueda.length == 2) {
+            // Llega con campo y valor
+            // Ejemplo campo = titulo
+            campoBusqueda = partesBusqueda[0].trim();
+            // Ejemplo valor = java
+            valorBusqueda = partesBusqueda[1].trim();
+        } else {
+            // Si solo llega un valor sin campo, buscamos por título por defecto
+            campoBusqueda = "titulo";
+            valorBusqueda = busqueda.trim();
+        }
+
+        // Llamamos al servicio
+        return cursoService.buscar(campoBusqueda, valorBusqueda, pageable);
     }
 
-    // GET ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Curso> findById(@PathVariable Long id) {
+    // INSCRIPCIÓN
 
-        return cursoService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // CREATE
-    @PostMapping
-    public ResponseEntity<Curso> save(@RequestBody Curso curso) {
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(cursoService.save(curso));
-    }
-
-    // UPDATE
-    @PutMapping("/{id}")
-    public ResponseEntity<Curso> update(
-            @PathVariable Long id,
-            @RequestBody Curso curso
+    @PostMapping("/inscribir/{alumnoId}/{cursoId}")
+    public InscripcionDTO inscribir(
+            @PathVariable Long alumnoId,
+            @PathVariable Long cursoId
     ) {
-
-        return ResponseEntity.ok(
-                cursoService.update(id, curso)
-        );
-    }
-
-    // DELETE
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-
-        cursoService.delete(id);
-
-        return ResponseEntity.noContent().build();
+        return cursoService.inscribir(alumnoId, cursoId);
     }
 }

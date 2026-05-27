@@ -1,142 +1,159 @@
 package com.examenjpa.recuptema4.util;
 
-import com.examenjpa.recuptema4.domain.Alumno;
-import com.examenjpa.recuptema4.domain.Curso;
-import com.examenjpa.recuptema4.domain.Nivel;
-import com.examenjpa.recuptema4.repository.AlumnoRepository;
-import com.examenjpa.recuptema4.repository.CursoRepository;
-import com.examenjpa.recuptema4.repository.NivelRepository;
-import jakarta.transaction.Transactional;
+import com.examenjpa.recuptema4.domain.*;
+import com.examenjpa.recuptema4.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
     private final AlumnoRepository alumnoRepository;
+
     private final CursoRepository cursoRepository;
+
     private final NivelRepository nivelRepository;
 
+    private final InscripcionRepository inscripcionRepository;
+
+
     @Override
-    @Transactional
     public void run(String... args) throws Exception {
 
-        log.info("Cargando datos de prueba...");
+        Nivel basico = nivelRepository.save(
+                Nivel.builder()
+                        .nombre("Basico")
+                        .descripcion("Nivel basico")
+                        .build()
+        );
 
-        alumnoRepository.deleteAll();
-        cursoRepository.deleteAll();
-        nivelRepository.deleteAll();
+        Nivel intermedio = nivelRepository.save(
+                Nivel.builder()
+                        .nombre("Intermedio")
+                        .descripcion("Nivel intermedio")
+                        .build()
+        );
 
+        Nivel avanzado = nivelRepository.save(
+                Nivel.builder()
+                        .nombre("Avanzado")
+                        .descripcion("Nivel avanzado")
+                        .build()
+        );
 
+        Curso c1 = cursoRepository.save(
+                Curso.builder()
+                        .titulo("Java")
+                        .resumen("Curso Java")
+                        .precio(BigDecimal.valueOf(50))
+                        .horas(40)
+                        .nivel(basico)
+                        .build()
+        );
 
-        // Niveles
+        Curso c2 = cursoRepository.save(
+                Curso.builder()
+                        .titulo("Spring")
+                        .resumen("Curso Spring")
+                        .precio(BigDecimal.valueOf(80))
+                        .horas(60)
+                        .nivel(intermedio)
+                        .build()
+        );
 
-        Nivel nivel1 = Nivel.builder().nombre("Básico").descripcion("Nivel inicial").build();
-        Nivel nivel2 = Nivel.builder().nombre("Intermedio").descripcion("Nivel medio").build();
-        Nivel nivel3 = Nivel.builder().nombre("Avanzado").descripcion("Nivel experto").build();
+        Curso c3 = cursoRepository.save(
+                Curso.builder()
+                        .titulo("React")
+                        .resumen("Curso React")
+                        .precio(BigDecimal.valueOf(90))
+                        .horas(50)
+                        .nivel(avanzado)
+                        .build()
+        );
 
-        nivelRepository.save(nivel1);
-        nivelRepository.save(nivel2);
-        nivelRepository.save(nivel3);
+        Curso c4 = cursoRepository.save(
+                Curso.builder()
+                        .titulo("SQL")
+                        .resumen("Curso SQL")
+                        .precio(BigDecimal.valueOf(40))
+                        .horas(30)
+                        .nivel(basico)
+                        .build()
+        );
 
-        // Alumnos
+        Curso c5 = cursoRepository.save(
+                Curso.builder()
+                        .titulo("Docker")
+                        .resumen("Curso Docker")
+                        .precio(BigDecimal.valueOf(100))
+                        .horas(70)
+                        .nivel(avanzado)
+                        .build()
+        );
 
-        Alumno alumno1 = Alumno.builder()
-                .email("josejr@gmail.com")
-                .username("Joserd")
-                .password("1234")
-                .build();
+        Alumno a1 = alumnoRepository.save(
+                Alumno.builder()
+                        .email("juan@gmail.com")
+                        .username("juan")
+                        .password("1234")
+                        .build()
+        );
 
-        alumnoRepository.save(alumno1);
+        Alumno a2 = alumnoRepository.save(
+                Alumno.builder()
+                        .email("ana@gmail.com")
+                        .username("ana")
+                        .password("1234")
+                        .build()
+        );
 
-        Alumno alumno2 = Alumno.builder()
-                .email("sofiajisa@gmail.com")
-                .username("Sofiajisa")
-                .password("1234")
-                .build();
-        alumnoRepository.save(alumno2);
+        alumnoRepository.save(
+                Alumno.builder()
+                        .email("pepe@gmail.com")
+                        .username("pepe")
+                        .password("1234")
+                        .build()
+        );
 
-        Alumno alumno3 = Alumno.builder()
-                .email("pepito@gmail.com")
-                .username("pepito")
-                .password("1234")
-                .build();
-        alumnoRepository.save(alumno3);
+        alumnoRepository.save(
+                Alumno.builder()
+                        .email("lucia@gmail.com")
+                        .username("lucia")
+                        .password("1234")
+                        .build()
+        );
 
-        Alumno alumno4 = Alumno.builder()
-                .email("macarena12@gmail.com")
-                .username("Macarena")
-                .password("1234")
-                .build();
+        alumnoRepository.save(
+                Alumno.builder()
+                        .email("maria@gmail.com")
+                        .username("maria")
+                        .password("1234")
+                        .build()
+        );
 
-        alumnoRepository.save(alumno4);
+        inscripcionRepository.save(
+                Inscripcion.builder()
+                        .alumno(a1)
+                        .curso(c1)
+                        .build()
+        );
 
-        Alumno alumno5 = Alumno.builder()
-                .email("juan2308@gmail.com")
-                .username("Juanka")
-                .password("1234")
-                .build();
-        alumnoRepository.save(alumno5);
+        inscripcionRepository.save(
+                Inscripcion.builder()
+                        .alumno(a1)
+                        .curso(c2)
+                        .build()
+        );
 
-        // Cursos
-
-        Curso curso1 = Curso.builder()
-                .titulo("TIC")
-                .resumen("ordenadores y aplicaciones")
-                .precio(BigDecimal.valueOf(45.99))
-                .horas(5)
-                .nivel(nivel1)
-                .build();
-
-        cursoRepository.save(curso1);
-
-        Curso curso2 = Curso.builder()
-                .titulo("Francés")
-                .resumen("idiomas")
-                .precio(BigDecimal.valueOf(13.50))
-                .horas(4)
-                .nivel(nivel2)
-                .build();
-
-        cursoRepository.save(curso2);
-        Curso curso3 = Curso.builder()
-                .titulo("Inglés")
-                .resumen("aprendemos a desarrollar el habla en inglés")
-                .precio(BigDecimal.valueOf(25.99))
-                .horas(8)
-                .nivel(nivel3)
-                .build();
-
-        cursoRepository.save(curso3);
-        Curso curso4 = Curso.builder()
-                .titulo("IPE")
-                .resumen("Aprenderemos las cosas básicas sobre las empresas")
-                .precio(BigDecimal.valueOf(45.99))
-                .horas(5)
-                .nivel(nivel1)
-                .build();
-
-        cursoRepository.save(curso4);
-        Curso curso5 = Curso.builder()
-                .titulo("Historia")
-                .resumen("conoce de donde vienes")
-                .precio(BigDecimal.valueOf(23.8))
-                .horas(4)
-                .nivel(nivel3)
-                .build();
-        cursoRepository.save(curso5);
-
-
-
-
-
-
+        inscripcionRepository.save(
+                Inscripcion.builder()
+                        .alumno(a2)
+                        .curso(c3)
+                        .build()
+        );
     }
 }

@@ -7,40 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "alumno")
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Alumno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_alumno")
-
-    @EqualsAndHashCode.Include
     private Long id;
 
-
-    @Column(length = 120)
     private String email;
 
-    @Column(length = 120)
     private String username;
 
-    @Column(length = 255)
     private String password;
 
-    @ManyToMany
-    @JoinTable(
-            name = "inscripcion",
-            joinColumns = @JoinColumn(name = "alumno_id"),
-            inverseJoinColumns = @JoinColumn(name = "curso_id")
-    )
-
-    @Builder.Default
-    private List<Curso> cursos = new ArrayList<>();
+    @OneToMany(mappedBy = "alumno")
+    private List<Inscripcion> inscripciones = new ArrayList<>();
 
 }

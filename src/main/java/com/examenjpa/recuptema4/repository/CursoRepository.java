@@ -5,21 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CursoRepository
-        extends JpaRepository<Curso, Long> {
+public interface CursoRepository extends JpaRepository<Curso, Long> {
 
-    Page<Curso> findByTituloContainingIgnoreCase(
-            String titulo,
-            Pageable pageable
-    );
+    Page<Curso> findByTituloContainingIgnoreCase(String titulo, Pageable pageable);
 
-    Page<Curso> findByResumenContainingIgnoreCase(
-            String resumen,
-            Pageable pageable
-    );
-
-    Page<Curso> findByPrecio(
-            Double precio,
-            Pageable pageable
-    );
+    Page<Curso> findByResumenContainingIgnoreCase(String resumen, Pageable pageable);
 }

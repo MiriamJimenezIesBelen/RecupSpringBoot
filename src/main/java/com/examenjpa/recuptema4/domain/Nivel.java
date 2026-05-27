@@ -7,26 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "nivel")
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Nivel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 120)
     private String nombre;
 
-    @Column(length = 255)
     private String descripcion;
 
-    @OneToMany(mappedBy = "nivel", cascade = CascadeType.ALL)
-    @Builder.Default
+    @OneToMany(mappedBy = "nivel")
     private List<Curso> cursos = new ArrayList<>();
+
 }

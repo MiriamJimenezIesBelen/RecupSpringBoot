@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "inscripcion")
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@Table(name = "inscripcion")
 public class Inscripcion {
 
     @Id
@@ -20,8 +19,8 @@ public class Inscripcion {
     @JoinColumn(name = "alumno_id")
     private Alumno alumno;
 
-
     @ManyToOne
     @JoinColumn(name = "curso_id")
     private Curso curso;
+
 }
